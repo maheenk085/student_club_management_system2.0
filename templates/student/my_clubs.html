@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}My Clubs - ClubHub 2.0{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>My Clubs</h1>
+        <p>Your club memberships and join requests.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if memberships %}
+        <div class="card-grid">
+            {% for m in memberships %}
+            <div class="card">
+                <img class="card-image"
+                     src="{{ url_for('static', filename='images/clubs/' ~ m.image_filename) }}"
+                     alt="{{ m.name }}">
+                <div class="card-body">
+                    <h3>{{ m.name }}</h3>
+                    {% if m.category %}<p class="card-meta">{{ m.category }}</p>{% endif %}
+                    <p class="card-meta">Requested: {{ m.requested_at.strftime('%d %b %Y') }}</p>
+                    <br>
+                    {% if m.status == 'approved' %}
+                        <span class="badge badge-approved">Member</span>
+                    {% elif m.status == 'pending' %}
+                        <span class="badge badge-pending">Pending</span>
+                    {% else %}
+                        <span class="badge badge-rejected">Rejected</span>
+                    {% endif %}
+                    <a href="{{ url_for('club_details', club_id=m.club_id) }}" class="btn btn-secondary">View Club</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">You have not joined any clubs yet.
+            <a href="{{ url_for('clubs_page') }}">Browse clubs</a></p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

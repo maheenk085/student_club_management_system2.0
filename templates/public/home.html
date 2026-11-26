@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}ClubHub 2.0 - Home{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <h1>Discover. Connect. Participate.</h1>
+        <p>Explore university clubs, meet new people, and participate in exciting events.</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('clubs_page') }}" class="btn btn-primary">Explore Clubs</a>
+            <a href="{{ url_for('events_page') }}" class="btn btn-outline-light">View Events</a>
+        </div>
+    </div>
+</section>
+
+<!-- POPULAR CLUBS -->
+<section class="section" id="clubs">
+    <div class="container">
+        <h2 class="section-title">Popular Clubs</h2>
+        <p class="section-subtitle">Find a community that matches your interests.</p>
+
+        {% if clubs %}
+        <div class="card-grid">
+            {% for club in clubs %}
+            <div class="card">
+                <img class="card-image"
+                     src="{{ url_for('static', filename='images/clubs/' ~ club.image_filename) }}"
+                     alt="{{ club.name }}">
+                <div class="card-body">
+                    <h3>{{ club.name }}</h3>
+                    <p>{{ club.description }}</p>
+                    <a href="{{ url_for('club_details', club_id=club.id) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">No clubs available yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- UPCOMING EVENTS -->
+<section class="section" id="events">
+    <div class="container">
+        <h2 class="section-title">Upcoming Events</h2>
+        <p class="section-subtitle">Don't miss what's happening on campus.</p>
+
+        {% if events %}
+        <div class="card-grid">
+            {% for event in events %}
+            <div class="card">
+                <img class="card-image"
+                     src="{{ url_for('static', filename='images/events/' ~ event.image_filename) }}"
+                     alt="{{ event.title }}">
+                <div class="card-body">
+                    <h3>{{ event.title }}</h3>
+                    <p class="card-meta">📅 {{ event.event_date.strftime('%d %b %Y, %I:%M %p') }}</p>
+                    <p class="card-meta">📍 {{ event.location }}</p>
+                    <br>
+                    <a href="{{ url_for('event_details', event_id=event.id) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">No upcoming events right now.</p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

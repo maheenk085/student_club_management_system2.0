@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Clubs - ClubHub 2.0{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>University Clubs</h1>
+        <p>Browse all clubs and find the one that fits you.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if clubs %}
+        <div class="card-grid">
+            {% for club in clubs %}
+            <div class="card">
+                <img class="card-image"
+                     src="{{ url_for('static', filename='images/clubs/' ~ club.image_filename) }}"
+                     alt="{{ club.name }}">
+                <div class="card-body">
+                    <h3>{{ club.name }}</h3>
+                    {% if club.category %}<p class="card-meta">{{ club.category }}</p>{% endif %}
+                    <p>{{ club.description }}</p>
+                    <a href="{{ url_for('club_details', club_id=club.id) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">No clubs available yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

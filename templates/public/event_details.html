@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} - ClubHub 2.0{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>{{ event.title }}</h1>
+        <p>Organized by {{ event.club_name }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container detail-layout">
+        <img class="detail-image"
+             src="{{ url_for('static', filename='images/events/' ~ event.image_filename) }}"
+             alt="{{ event.title }}">
+        <div>
+            <h2 class="detail-heading">About this event</h2>
+            <p>{{ event.description }}</p>
+            <br>
+            <p class="card-meta">📅 {{ event.event_date.strftime('%A, %d %B %Y, %I:%M %p') }}</p>
+            <p class="card-meta">📍 {{ event.location }}</p>
+            <p class="card-meta">🏷️ <a href="{{ url_for('club_details', club_id=event.club_id) }}">{{ event.club_name }}</a></p>
+            <br>
+            <a href="#" class="btn btn-primary">Register for Event</a>
+            <a href="{{ url_for('events_page') }}" class="btn btn-secondary">Back to Events</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

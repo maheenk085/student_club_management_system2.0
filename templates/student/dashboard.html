@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - ClubHub 2.0{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>Welcome, {{ session.get('user_name') }}</h1>
+        <p>This is your student dashboard.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="card-grid">
+            <div class="card stat-card">
+                <p class="stat-number">{{ joined_clubs }}</p>
+                <p class="stat-label">Clubs Joined</p>
+            </div>
+            <div class="card stat-card">
+                <p class="stat-number">{{ pending_requests }}</p>
+                <p class="stat-label">Pending Requests</p>
+            </div>
+            <div class="card stat-card">
+                <p class="stat-number">{{ registered_events }}</p>
+                <p class="stat-label">Events Registered</p>
+            </div>
+        </div>
+
+        <div class="dashboard-actions">
+            <a href="{{ url_for('clubs_page') }}" class="btn btn-primary">Browse Clubs</a>
+            <a href="{{ url_for('events_page') }}" class="btn btn-secondary">Browse Events</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

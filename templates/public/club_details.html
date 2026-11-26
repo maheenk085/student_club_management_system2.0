@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ club.name }} - ClubHub 2.0{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>{{ club.name }}</h1>
+        {% if club.category %}<p>{{ club.category }}</p>{% endif %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="container detail-layout">
+        <img class="detail-image"
+             src="{{ url_for('static', filename='images/clubs/' ~ club.image_filename) }}"
+             alt="{{ club.name }}">
+        <div>
+            <h2 class="detail-heading">About this club</h2>
+            <p>{{ club.description }}</p>
+            <br>
+                {% if not session.get('user_id') %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Join</a>
+            {% elif session.get('role') == 'student' %}
+                {% if membership_status == 'approved' %}
+                    <span class="badge badge-approved">Member</span>
+                {% elif membership_status == 'pending' %}
+                    <span class="badge badge-pending">Request Pending</span>
+                {% elif membership_status == 'rejected' %}
+                    <span class="badge badge-rejected">Request Rejected</span>
+                {% else %}
+                    <form method="POST" action="{{ url_for('join_club', club_id=club.id) }}" class="inline-form">
+                        <button type="submit" class="btn btn-primary">Join Club</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+            <a href="{{ url_for('clubs_page') }}" class="btn btn-secondary">Back to Clubs</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Upcoming Events</h2>
+        <br>
+        {% if events %}
+        <div class="card-grid">
+            {% for event in events %}
+            <div class="card">
+                <img class="card-image"
+                     src="{{ url_for('static', filename='images/events/' ~ event.image_filename) }}"
+                     alt="{{ event.title }}">
+                <div class="card-body">
+                    <h3>{{ event.title }}</h3>
+                    <p class="card-meta">📅 {{ event.event_date.strftime('%d %b %Y, %I:%M %p') }}</p>
+                    <p class="card-meta">📍 {{ event.location }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">This club has no upcoming events.</p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
