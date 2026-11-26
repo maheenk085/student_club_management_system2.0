@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}My Events - ClubHub 2.0{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>My Events</h1>
+        <p>The events you have registered for.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if registrations %}
+        <div class="card-grid">
+            {% for r in registrations %}
+            <div class="card">
+                <img class="card-image"
+                     src="{{ url_for('static', filename='images/events/' ~ r.image_filename) }}"
+                     alt="{{ r.title }}">
+                <div class="card-body">
+                    <h3>{{ r.title }}</h3>
+                    <p class="card-meta">🏷️ {{ r.club_name }}</p>
+                    <p class="card-meta">📅 {{ r.event_date.strftime('%d %b %Y, %I:%M %p') }}</p>
+                    <p class="card-meta">📍 {{ r.location }}</p>
+                    <br>
+                    <a href="{{ url_for('event_details', event_id=r.event_id) }}" class="btn btn-secondary">View Event</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-text">You have not registered for any events yet.
+            <a href="{{ url_for('events_page') }}">Browse events</a></p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

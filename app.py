@@ -109,6 +109,7 @@ def events_page():
 @app.route("/events/<int:event_id>")
 def event_details(event_id):
     connection = get_connection()
+    is_registered = False
     with connection.cursor() as cursor:
         cursor.execute(
             "SELECT e.id, e.title, e.description, e.event_date, e.location, e.image_filename, "
@@ -117,12 +118,19 @@ def event_details(event_id):
             (event_id,),
         )
         event = cursor.fetchone()
+
+        if event is not None and session.get("role") == "student":
+            cursor.execute(
+                "SELECT id FROM event_registrations WHERE event_id = %s AND user_id = %s",
+                (event_id, session["user_id"]),
+            )
+            is_registered = cursor.fetchone() is not None
     connection.close()
 
     if event is None:
         abort(404)
 
-    return render_template("public/event_details.html", event=event)
+    return render_template("public/event_details.html", event=event, is_registered=is_registered)
 
 
 @app.route("/about")
@@ -295,6 +303,54 @@ def my_clubs():
     connection.close()
 
     return render_template("student/my_clubs.html", memberships=memberships)
+
+@app.route("/events/<int:event_id>/register", methods=["POST"])
+@role_required("student")
+def register_for_event(event_id):
+    connection = get_connection()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, event_date FROM events WHERE id = %s", (event_id,))
+        event = cursor.fetchone()
+        if event is None:
+            connection.close()
+            abort(404)
+
+        cursor.execute(
+            "SELECT id FROM event_registrations WHERE event_id = %s AND user_id = %s",
+            (event_id, session["user_id"]),
+        )
+        if cursor.fetchone():
+            flash("You are already registered for this event.", "error")
+        else:
+            cursor.execute(
+                "INSERT INTO event_registrations (event_id, user_id) VALUES (%s, %s)",
+                (event_id, session["user_id"]),
+            )
+            connection.commit()
+            flash("You have registered for the event!", "success")
+    connection.close()
+
+    return redirect(url_for("event_details", event_id=event_id))
+
+
+@app.route("/student/my-events")
+@role_required("student")
+def my_events():
+    connection = get_connection()
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT r.registered_at, e.id AS event_id, e.title, e.event_date, e.location, "
+            "e.image_filename, c.name AS club_name "
+            "FROM event_registrations r "
+            "JOIN events e ON r.event_id = e.id "
+            "JOIN clubs c ON e.club_id = c.id "
+            "WHERE r.user_id = %s ORDER BY e.event_date",
+            (session["user_id"],),
+        )
+        registrations = cursor.fetchall()
+    connection.close()
+
+    return render_template("student/my_events.html", registrations=registrations)
 
 
 if __name__ == "__main__":

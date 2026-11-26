@@ -24,7 +24,17 @@
             <p class="card-meta">📍 {{ event.location }}</p>
             <p class="card-meta">🏷️ <a href="{{ url_for('club_details', club_id=event.club_id) }}">{{ event.club_name }}</a></p>
             <br>
-            <a href="#" class="btn btn-primary">Register for Event</a>
+                        {% if not session.get('user_id') %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Register</a>
+            {% elif session.get('role') == 'student' %}
+                {% if is_registered %}
+                    <span class="badge badge-approved">Registered</span>
+                {% else %}
+                    <form method="POST" action="{{ url_for('register_for_event', event_id=event.id) }}" class="inline-form">
+                        <button type="submit" class="btn btn-primary">Register for Event</button>
+                    </form>
+                {% endif %}
+            {% endif %}
             <a href="{{ url_for('events_page') }}" class="btn btn-secondary">Back to Events</a>
         </div>
     </div>
