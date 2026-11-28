@@ -352,6 +352,56 @@ def my_events():
 
     return render_template("student/my_events.html", registrations=registrations)
 
+@app.route("/student/announcements")
+@role_required("student")
+def student_announcements():
+    connection = get_connection()
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT a.title, a.content, a.created_at, c.id AS club_id, c.name AS club_name "
+            "FROM announcements a JOIN clubs c ON a.club_id = c.id "
+            "ORDER BY a.created_at DESC"
+        )
+        announcements = cursor.fetchall()
+    connection.close()
+
+    return render_template("student/announcements.html", announcements=announcements)
+
+
+@app.route("/student/profile", methods=["GET", "POST"])
+@role_required("student")
+def student_profile():
+    user_id = session["user_id"]
+    connection = get_connection()
+
+    if request.method == "POST":
+        full_name = request.form.get("full_name", "").strip()
+        phone = request.form.get("phone", "").strip()
+        student_number = request.form.get("student_number", "").strip()
+
+        if not full_name:
+            flash("Full name cannot be empty.", "error")
+        else:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE users SET full_name = %s, phone = %s, student_number = %s WHERE id = %s",
+                    (full_name, phone or None, student_number or None, user_id),
+                )
+                connection.commit()
+            session["user_name"] = full_name
+            flash("Profile updated successfully.", "success")
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT full_name, email, phone, student_number, created_at FROM users WHERE id = %s",
+            (user_id,),
+        )
+        user = cursor.fetchone()
+    connection.close()
+
+    return render_template("student/profile.html", user=user)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

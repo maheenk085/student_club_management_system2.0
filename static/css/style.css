@@ -180,3 +180,10 @@ img { max-width: 100%; display: block; }
 .badge-pending { background: #FEF3C7; color: #92400E; }
 .badge-rejected { background: #FDECEC; color: #991B1B; }
 .inline-form { display: inline; }
+
+
+/* ---------- Announcements & profile ---------- */
+.announcement-card { margin-bottom: 18px; }
+.announcement-card:hover { transform: none; }
+.announcement-card a { color: var(--primary-blue); font-weight: 500; }
+.readonly-input { background: var(--light-background); color: var(--text-muted); }

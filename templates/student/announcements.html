@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Announcements - ClubHub 2.0{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div class="container">
+        <h1>Announcements</h1>
+        <p>The latest news from university clubs.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if announcements %}
+        {% for a in announcements %}
+        <div class="card announcement-card">
+            <div class="card-body">
+                <h3>{{ a.title }}</h3>
+                <p class="card-meta">
+                    🏷️ <a href="{{ url_for('club_details', club_id=a.club_id) }}">{{ a.club_name }}</a>
+                    &nbsp;•&nbsp; 📅 {{ a.created_at.strftime('%d %b %Y') }}
+                </p>
+                <p>{{ a.content }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="empty-text">There are no announcements yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

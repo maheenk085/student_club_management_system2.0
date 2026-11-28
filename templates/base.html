@@ -25,6 +25,8 @@
                     <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
                     <a href="{{ url_for('my_clubs') }}">My Clubs</a>
                                         <a href="{{ url_for('my_events') }}">My Events</a>
+                                        <a href="{{ url_for('student_announcements') }}">Announcements</a>
+                                        <a href="{{ url_for('student_profile') }}">Profile</a>
                     {% endif %}
                     <span class="nav-user">Hi, {{ session.get('user_name') }}</span>
                     <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
